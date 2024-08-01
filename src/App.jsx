@@ -3,9 +3,9 @@ import './App.css'
 
 
 const getItems=() => {
-  let favList=localStorage.getItem('favs');
+  let favList=sessionStorage.getItem('favs');
   if(favList){
-    return JSON.parse(localStorage.getItem('favs'))
+    return JSON.parse(sessionStorage.getItem('favs'))
   }else{
     return []
   }
@@ -18,7 +18,7 @@ function App() {
 
   useEffect(() => {
     console.log("retrieving items...");
-    localStorage.setItem('favs', JSON.stringify(fav));
+    sessionStorage.setItem('favs', JSON.stringify(fav));
   }, [fav]);
 
 
