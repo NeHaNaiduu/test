@@ -1,25 +1,62 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
+
+const getItems=() => {
+  let favList=localStorage.getItem('favs');
+  if(favList){
+    return JSON.parse(localStorage.getItem('favs'))
+  }else{
+    return []
+  }
+}
+
 function App() {
 
-  const[content,setContent]=useState([])
+  const[cont,setCont]=useState([])
+  const[fav,setFav]=useState(getItems())
 
-  useEffect(()=>(
-    fetch(`https://www.themealdb.com/api/json/v1/1/categories.php`)
-    .then(res=>res.json())
-    .then(data=>{
-      console.log(data.categories);
-      setContent(data.categories)
+  useEffect(() => {
+    console.log("retrieving items...");
+    localStorage.setItem('favs', JSON.stringify(fav));
+  }, [fav]);
+
+
+  useEffect(()=>{
+    // fetch(`https://www.themealdb.com/api/json/v1/1/categories.php`)
+    // .then(res=>res.json())
+    // .then(data=>{
+    //   //console.log(data)
+    //   setContent(data.categories)
+    // }
+    // )
+    async function fetchName(){
+      const res=await fetch(`https://www.themealdb.com/api/json/v1/1/categories.php`)
+      const data=await res.json()
+      setCont(data.categories)
     }
-    )
-  ),[])
+    fetchName();
+},[]);
+
+const handleFavClick=(item)=>{
+  setFav([...fav,item])
+}
 
   return (
-    <div style={{display:"flex"}}>
-      <h2>Hello</h2>
-      <button>Fav</button>
-    </div>
+    <>
+     {cont.map((item)=>(
+        <div key={item.idCategory} style={{display:"flex"}}>
+          <h2>{item.strCategory}</h2>
+          <button onClick={()=>handleFavClick(item)}>Fav</button>
+        </div>
+     ))}
+     <h1>Fav Items : </h1>
+     {fav.map((item)=>(
+        <li key={item.idCategory}>
+          {item.strCategory}
+        </li>
+     ))}
+    </>
   )
 }
 
